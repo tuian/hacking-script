@@ -1,0 +1,10 @@
+D:\C#代码\s2-045\s2-045\bin\Release\s2-045.exe
+D:\C#代码\s2-045\s2-045\bin\Release\s2-045.pdb
+D:\C#代码\s2-045\s2-045\bin\Release\HttpHelper.dll
+D:\C#代码\s2-045\s2-045\bin\Release\HttpHelper.xml
+D:\C#代码\s2-045\s2-045\obj\Release\s2_045.Form1.resources
+D:\C#代码\s2-045\s2-045\obj\Release\s2_045.Properties.Resources.resources
+D:\C#代码\s2-045\s2-045\obj\Release\s2-045.csproj.GenerateResource.Cache
+D:\C#代码\s2-045\s2-045\obj\Release\s2-045.exe
+D:\C#代码\s2-045\s2-045\obj\Release\s2-045.pdb
+D:\C#代码\s2-045\s2-045\obj\Release\s2-045.csprojResolveAssemblyReference.cache

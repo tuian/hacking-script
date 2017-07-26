@@ -1,0 +1,36 @@
+if __name__ == "__main__":
+  if len(sys.argv) == 2:
+    print '2'
+    print json.dumps(start_wyspider(sys.argv[1]), indent=2)
+    sys.exit(0)
+  elif len(sys.argv)==3:
+    for i in open(sys.argv[2]):
+      print i
+      print json.dumps(start_wyspider(str(i).strip()), indent=2)
+    sys.exit(0)
+  else:
+    print ("usage: %s http://wuyun.org" % sys.argv[0])
+    print ("usage: %s -u url.txt" % sys.argv[0])
+    sys.exit(-1)
+
+    if __name__ == "__main__":
+  f = file("result.txt","a+")
+  result = "test"
+  if len(sys.argv) == 2:    
+    result = json.dumps(start_wyspider(sys.argv[1]), indent=2)
+    f.write(result)
+    print result
+    sys.exit(0)
+  elif len(sys.argv)==3:
+    for i in open(sys.argv[2]):      
+      result = json.dumps(start_wyspider(str(i).strip()), indent=2)
+      f.write(result)
+      print result
+    sys.exit(0)
+  else:
+    print ("usage: %s http://wuyun.org" % sys.argv[0])
+    print ("usage: %s -u url.txt" % sys.argv[0])
+    sys.exit(-1)
+    加了点代码
+扫描完成后会写入结果在当前目录，生成文件result.txt(代码很搓，有点冗余)
+加了个用法：python wyspider.py -u url.txt   (从当前目录url.txt循环取url然后开始扫描)

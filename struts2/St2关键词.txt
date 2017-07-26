@@ -1,0 +1,431 @@
+政府官方 struts problem
+inurl:login.action
+action?id=
+edu Struts Problem
+gov Struts Problem
+政府 Struts Problem
+医院 Struts Problem
+学院 Struts Problem
+all Struts Problem
+do Struts Problem
+jsp Struts Problem
+asp Struts Problem
+".action?roomid="
+商城.achtion
+nurl:asp?id= 
+EnCompHonorBig.asp?id=9
+showproduct.asp?id=6
+inurl:ManageLogin.asp 
+EnCompHonorBig.asp?id= 3
+inurl: asp?=6 inurl: php?=6
+inurl:Article_Print.asp? 
+site 指定网站 inurl:Article_Print.asp? 
+NewsInfo.asp?id= 
+ShowNew.asp?Id= 
+ShowNews.asp?Id= 
+Show.asp?Id= 
+Google dorks sql injection: 
+inurl:index.php?id= 
+inurl:trainers.php?id= 
+inurl:buy.php?category= 
+inurl:article.php?ID= 
+inurllay_old.php?id= 
+inurl:declaration_more.php?decl_id= 
+inurlageid= 
+inurl:games.php?id= 
+inurlage.php?file= 
+inurl:newsDetail.php?id= 
+inurl:gallery.php?id= 
+inurl:article.php?id= 
+inurl:show.php?id= 
+inurl:staff_id= 
+inurl:newsitem.php?num= 
+inurl:readnews.php?id= 
+inurl:top10.php?cat= 
+inurl:historialeer.php?num= 
+inurl:reagir.php?num= 
+inurl:Stray-Questions-View.php?num= 
+inurl:forum_bds.php?num= 
+inurl:game.php?id= 
+inurl:view_product.php?id= 
+inurl:newsone.php?id= 
+inurl:sw_comment.php?id= 
+inurl:news.php?id= 
+inurl:avd_start.php?avd= 
+inurl:event.php?id= 
+inurlroduct-item.php?id= 
+inurl:sql.php?id= 
+inurl:news_view.php?id= 
+inurl:select_biblio.php?id= 
+inurl:humor.php?id= 
+inurl:aboutbook.php?id= 
+inurl:fiche_spectacle.php?id= 
+inurl:communique_detail.php?id= 
+inurl:sem.php3?id= 
+inurl:kategorie.php4?id= 
+inurl:news.php?id= 
+inurl:index.php?id= 
+inurl:faq2.php?id= 
+inurl:show_an.php?id= 
+inurlreview.php?id= 
+inurl:loadpsb.php?id= 
+inurl:Opinions.php?id= 
+inurl:spr.php?id= 
+inurlages.php?id= 
+inurl:announce.php?id= 
+inurl:clanek.php4?id= 
+inurlarticipant.php?id= 
+inurl:download.php?id= 
+inurl:main.php?id= 
+inurl:review.php?id= 
+inurl:chappies.php?id= 
+inurl:read.php?id= 
+inurlrod_detail.php?id= 
+inurl:viewphoto.php?id= 
+inurl:article.php?id= 
+inurlerson.php?id= 
+inurlroductinfo.php?id= 
+inurl:showimg.php?id= 
+inurl:view.php?id= 
+inurl:Website.php?id= 
+inurl:hosting_info.php?id= 
+inurl:gallery.php?id= 
+inurl:rub.php?idr= 
+inurl:view_faq.php?id= 
+inurl:artikelinfo.php?id= 
+inurl:detail.php?ID= 
+inurl:index.php?= 
+inurlrofile_view.php?id= 
+inurl:category.php?id= 
+inurlublications.php?id= 
+inurl:fellows.php?id= 
+inurl:downloads_info.php?id= 
+inurlrod_info.php?id= 
+inurl:shop.php?do=part&id= 
+inurlroductinfo.php?id= 
+inurl:collectionitem.php?id= 
+inurl:band_info.php?id= 
+inurlroduct.php?id= 
+inurl:releases.php?id= 
+inurl:ray.php?id= 
+inurlroduit.php?id= 
+inurlop.php?id= 
+inurl:shopping.php?id= 
+inurlroductdetail.php?id= 
+inurlost.php?id= 
+inurl:viewshowdetail.php?id= 
+inurl:clubpage.php?id= 
+inurl:memberInfo.php?id= 
+inurl:section.php?id= 
+inurl:theme.php?id= 
+inurlage.php?id= 
+inurl:shredder-categories.php?id= 
+inurl:tradeCategory.php?id= 
+inurl:Product_ranges_view.php?ID= 
+inurl:shop_category.php?id= 
+inurl:transcript.php?id= 
+inurl:channel_id= 
+inurl:item_id= 
+inurl:newsid= 
+inurl:trainers.php?id= 
+inurl:news-full.php?id= 
+inurl:news_display.php?getid= 
+inurl:index2.php?option= 
+inurl:readnews.php?id= 
+inurl:top10.php?cat= 
+inurl:newsone.php?id= 
+inurl:event.php?id= 
+inurl:Product-item.php?id= 
+inurl:sql.php?id= 
+inurl:aboutbook.php?id= 
+inurl:review.php?id= 
+inurl:loadpsb.php?id= 
+inurl:ages.php?id= 
+inurl:material.php?id= 
+inurl:clanek.php4?id= 
+inurl:announce.php?id= 
+inurl:chappies.php?id= 
+inurl:read.php?id= 
+inurl:viewapp.php?id= 
+inurl:viewphoto.php?id= 
+inurl:rub.php?idr= 
+inurl:galeri_info.php?l= 
+inurl:review.php?id= 
+inurl:iniziativa.php?in= 
+inurl:curriculum.php?id= 
+inurl:labels.php?id= 
+inurl:story.php?id= 
+inurl:look.php?ID= 
+inurl:newsone.php?id= 
+inurl:aboutbook.php?id= 
+inurl:material.php?id= 
+inurl:Opinions.php?id= 
+inurl:announce.php?id= 
+inurl:rub.php?idr= 
+inurl:galeri_info.php?l= 
+inurl:tekst.php?idt= 
+inurl:newscat.php?id= 
+inurl:newsticker_info.php?idn= 
+inurl:rubrika.php?idr= 
+inurl:rubp.php?idr= 
+inurl:Offer.php?idf= 
+inurl:art.php?idm= 
+inurl:title.php?id= 
+CompHonorBig.asp?id= 
+inurl:articleshow.asp?articleid=8
+showproduct.asp?id= 
+inurl:ManageLogin.asp 
+EnCompHonorBig.asp?id= 
+inurl: asp?=4 inurl: php?=3
+inurl:Article_Print.asp? 
+site inurl:Article_Print.asp? 
+inurl:Article_Print.asp? 
+EnCompHonorBig.asp?id=3
+showproduct.asp?id=96
+inurl:ManageLogin.asp 
+EnCompHonorBig.asp?id= 9
+inurl: asp?=1
+inurl: php?=8
+inurl:Article_Print.asp? 
+site http://www.xmevs.com/ inurl:Article_Print.asp? 
+NewsInfo.asp?id= 
+ShowNew.asp?Id= 
+ShowNews.asp?Id= 
+Show.asp?Id= 
+金融财务 struts problem
+技术论坛 struts problem
+百度论坛 struts problem
+手机企业 struts problem
+社区学校 struts problem
+机场安保 struts problem
+苹果iphone struts problem
+传输搭建 struts problem
+运行库 struts problem
+英国大学 struts problem
+美国大学 struts problem
+立顿 struts problem
+监测 struts problem
+net struts problem
+struts problem
+自慰器 struts problem
+治疗仪 struts problem
+蝎子 struts problem
+保健茶 struts problem
+血糖仪 struts problem
+情趣用品 struts problem
+医疗 struts problem
+医疗设备 struts problem
+蜈蚣 struts problem
+西洋参 struts problem
+土特产 struts problem
+六味地黄丸 struts problem
+蟾衣安眠药 struts problem
+骨科 struts problem
+膏药 struts problem
+电动轮椅 struts problem
+水蛭 struts problem
+甘草 struts problem
+空心胶囊 struts problem
+体温计 struts problem
+处女膜 struts problem
+听诊器 struts problem
+性器具 struts problem
+前列腺 struts problem
+杜仲 struts problem
+何首乌 struts problem
+苦丁茶 struts problem
+藏药 struts problem
+鹦鹉 struts problem
+国际品牌化妆品 struts problem
+手铐 struts problem
+情侣用品 struts problem
+氧气瓶 struts problem
+林蛙 struts problem
+女性保健品 struts problem
+杜仲茶 struts problem
+冬虫草 struts problem
+减肥茶 struts problem
+牙科 struts problem
+纱布 struts problem
+男性保健品 struts problem
+女性自慰器 struts problem
+感冒药 struts problem
+澳柯玛 struts problem
+血气循环机 struts problem
+中成药 struts problem
+凡士林 struts problem
+性保健 struts problem
+草药 struts problem
+干扰素 struts problem
+beyond struts problem
+胶囊 struts problem
+一次性医用耗材 struts problem
+妇科用药 struts problem
+杰士邦 struts problem
+当归 struts problem
+病床 struts problem
+电脑 struts problem
+手机 struts problem
+音效 struts problem
+商场 struts problem
+键盘 struts problem
+鼠标 struts problem
+耳机 struts problem
+烟 struts problem
+学校 struts problem
+电源 struts problem
+电表 struts problem
+门窗 struts problem
+窗帘 struts problem
+沙发 struts problem
+家具 struts problem
+床 struts problem
+被子 struts problem
+玻璃 struts problem
+电视 struts problem
+二手对讲机 struts problem
+二手汽车 struts problem
+IP拨号器 struts problem
+IP struts problem
+GPS系统 struts problem
+GPS车载 struts problem
+手机滑轨 struts problem
+母线槽 struts problem
+计算机知识 struts problem
+v3c struts problem
+中国联通 struts problem
+视频分配器 struts problem
+短信平台 struts problem
+w550c struts problem
+母线 struts problem
+蓝牙产品 struts problem
+手表式对讲机 struts problem
+民用对讲机 struts problem
+录音 struts problem
+dlink struts problem
+array struts problem
+三星x609 struts problem
+武汉热线 struts problem
+包月电话 struts problem
+服装 struts problem
+电脑学院 struts problem
+书籍 struts problem
+企业网 struts problem
+二手家具 struts problem
+水产品 struts problem
+螺旋藻 struts problem
+白酒 struts problem
+酒 struts problem
+奶粉 struts problem
+安利 struts problem
+大米 struts problem
+普洱茶 struts problem
+蔬菜 struts problem
+啤酒 struts problem
+土豆 struts problem
+葡萄酒 struts problem
+巧克力 struts problem
+糖果 struts problem
+白糖 struts problem
+茶 struts problem
+婴儿奶粉 struts problem
+猪 struts problem
+葡萄 struts problem
+菊花 struts problem
+代销 struts problem
+橄榄油 struts problem
+灵芝 struts problem
+饼干 struts problem
+红酒 struts problem
+珍珠粉 struts problem
+洋酒 struts problem
+牛奶 struts problem
+水果 struts problem
+外套蓬松 struts problem
+瘦什么外套 struts problem
+黑外套链 struts problem
+帅哥外套 struts problem
+人物外套 struts problem
+黑灰外套 struts problem
+灰黑外套 struts problem
+09冬季外套 struts problem
+菱格棉外套 struts problem
+淘宝买外套 struts problem
+颜色外套 struts problem
+帽西装外套 struts problem
+nana外套 struts problem
+zdorzi外套 struts problem
+jack外套 struts problem
+外套84a struts problem
+摩高外套 struts problem
+外套贴毛 struts problem
+男外套暖 struts problem
+09jack外套 struts problem
+cipres外套 struts problem
+10元外套 struts problem
+外套买大 struts problem
+蓝色棉外套 struts problem
+胖挑选外套 struts problem
+有毛外套 struts problem
+外套有毛 struts problem
+红心外套 struts problem
+耳朵外套 struts problem
+状元坊外套 struts problem
+1500元外套 struts problem
+纤维外套 struts problem
+超酷外套 struts problem
+23岁外套 struts problem
+酷哥外套 struts problem
+牧羊外套 struts problem
+碳素外套 struts problem
+领棉外套 struts problem
+外套实用 struts problem
+买外套好 struts problem
+外套t恤 struts problem
+挑选外套 struts problem
+流行棉外套 struts problem
+外套衣领 struts problem
+快工作外套 struts problem
+水果 struts problem
+北京水果配送 struts problem
+网上买水果 struts problem
+水果批发配送 struts problem
+进口水果批发 struts problem
+水果批发网 struts problem
+网上水果店 struts problem
+北京水果批发 struts problem
+进口水果 struts problem
+新鲜水果网购 struts problem
+网上水果 struts problem
+水果礼品批发 struts problem
+北京水果网站 struts problem
+网上购水果 struts problem
+网上订购水果 struts problem
+新鲜水果 struts problem
+网购水果 struts problem
+配送水果 struts problem
+高档水果 struts problem
+新鲜水果团购 struts problem
+团购水果 struts problem
+水果礼品团购 struts problem
+北京水果团购 struts problem
+北京水果 struts problem
+北京水果团购网 struts problem
+蔬菜水果配送 struts problem
+网上购买水果 struts problem
+水果礼盒团购 struts problem
+批发水果 struts problem
+北京哪里卖进口水果 struts problem
+卖水果的网站 struts problem
+进口水果有哪些 struts problem
+水果配送中心 struts problem
+买水果的网站 struts problem
+高档水果礼品 struts problem
+高级水果 struts problem
+水果网上超市 struts problem
+进口水果网站 struts problem
+中国水果网 struts problem
+进口水果专卖 struts problem
+新鲜水果批发 struts problem
+购水果 struts problem
+特色水果 struts problem

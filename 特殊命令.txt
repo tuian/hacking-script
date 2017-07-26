@@ -1,0 +1,13 @@
+今天偶然利用此命令干成了大事，老司机一看就懂
+命令用法百度搜到的，希望对各位表哥有用
+echo 48 65 6C 6C 6F 2C 57 6F 72 6C 64 21 >hex.txt
+::生成 hex.txt，机器码对应的内容是 Hallo World!
+
+certutil -decodehex hex.txt bin.txt
+::Hex2Bin
+
+certutil -encode bin.txt Encode.txt
+::Base64_Encode
+
+certutil -decode Encode.txt Decode.txt
+::Base64_Decode

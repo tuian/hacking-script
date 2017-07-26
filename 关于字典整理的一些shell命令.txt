@@ -1,0 +1,225 @@
+关于字典整理的一些shell命令
+
+1、编码转换
+编码不正确会导致 各种莫名奇妙的问题 乱码 甚至 编辑的时候卡住 或 报错
+所有第一步就是要将转换编码
+
+enca -L zh_CN.UTF-8 baidu.txt  #查看该文本编码
+iconv -c -f GB2312 -t utf-8 #转换方法1
+enca -L zh_CN.UTF-8 -c  #方法2 自动转换 
+
+当然也可以直接
+
+iconv -c -f ASCII -t ASCII  test.txt
+
+2、转换成 unix 格式(转换换行符)
+dos2unix  当然也可以用tr  、sed
+
+3、剔除 无效字符 以及空行
+
+sed -e 's/[\x01-\x19]//g' -e 's/\x00/ /g'  -e 's/[\x1a-\x1f]//g' -e 's/^[ \t]*//' -e 's/[ \t]*$//'
+
+当然也可以使用
+
+grep -a -v '[[:cntrl:]]' #处理不够干净 还是喜欢用上面的方法
+
+这些字符 会导致 sed 、awk 、grep 等命令出错 或卡死 很烦人的
+
+4、去除重复
+
+sort baidu.log | uniq #测试该方法是我所知的最快的 缺点就是只是按照开头字符排序
+awk "{print length($1),$1}" file.txt | sort -n | awk "{print $2}"  # 字符串按照长度排序(短->长)   很慢
+
+5、分割字典
+
+split  很快速
+
+
+//整理字符集为键盘上的字符5-30位的密码
+grep -o -P "[[:lower:][:upper:][:digit:][:punct:] ]+" 2014_1_last | awk '{if(length($0) > 4 && length($0) < 31) print $0}' >> 2014_1_last_
+
+//删除1-7位的纯大写、1-7位的纯小写、1-9位的纯数字
+sed "/^[[:upper:]]\{1,7\}$/d;/^[[:lower:]]\{1,7\}$/d;/^[[:digit:]]\{1,9\}$/d;" 2014_1_last_ >>2014_1_last__
+
+//hashcat_masks 排名
+sed 's/[[:lower:]]/l/g;s/[[:upper:]]/u/g;s/[[:digit:]]/d/g;s/[[:punct:] ]/s/g' 2014_1_last__ | sort | uniq -c | sort -nr >>2014_1_last__hashcat_masks_sus
+
+//hashcat_masks 将luds前边加 ?
+sed 's/\([luds]\)/?\0/g;' 2014_1_last__hashcat_masks_sus
+ 
+//密码长度排名
+1、awk '{printf("%s %s %s\r\n",$1,length($2),$2)}' 2014_1_last__hashcat_masks_sus >>2014_1_last__hashcat_masks_sus_length
+2、awk '{a[$2]+=$1;}END{for(i in a){{print i" "a[i];}}}' 2014_1_last_x_hashcat_masks_sus_length | sort -nr -k2
+11 25281160
+10 15342231
+12 11047379
+14 9794974
+13 9105853
+9 8726583
+15 6864187
+8 6617661
+16 6235360
+7 1848134
+6 899233
+17 83551
+18 40174
+19 32202
+21 12649
+20 8847
+22 2216
+23 1824
+24 1333
+25 927
+28 918
+26 829
+27 733
+29 400
+30 255
+5 28
+
+//长度百分比排名
+$ awk '{a[$2]+=$1;}END{for(i in a){{print i" "a[i];}}}' 2014_1_last__hashcat_masks_sus_length | awk '{a[NR]=$1;b[NR]=$2;s+=$2}END{for(j=1;j<NR+1;j++) printf "%s\t%.5f%\n",a[j],b[j]*100/s}' 2014_1_last__length_sus | sort -nr -k2
+11      24.79769%
+10      15.04883%
+12      10.83611%
+14      9.60766%
+13      8.93172%
+9       8.55970%
+15      6.73292%
+8       6.49111%
+16      6.11612%
+7       1.81279%
+6       0.88204%
+17      0.08195%
+18      0.03941%
+19      0.03159%
+21      0.01241%
+20      0.00868%
+22      0.00217%
+23      0.00179%
+24      0.00131%
+25      0.00091%
+28      0.00090%
+26      0.00081%
+27      0.00072%
+29      0.00039%
+30      0.00025%
+5       0.00003%
+
+-----------------------------------
+//同时包含四种字符的排序
+$ grep '[u]' 2014_1_last_x_hashcat_masks_sus | grep '[d]' | grep '[l]' | grep '[s]' | head -n 10 | nl
+     1     1074 ullsdddd
+     2      963 ulllsdddd
+     3      834 ullsdddddd
+     4      807 ulldddds
+     5      800 ullllsdddd
+     6      735 uldddddds
+     7      735 ulddddddddddds
+     8      715 ulldddddds
+     9      703 ulddddddds
+    10      687 ullldddds
+
+//同时包含大小写数字的排序
+$ grep '[u]' 2014_1_last__hashcat_masks_sus | grep '[d]' | grep '[l]' | grep '[^s]' | head -n 10 | nl
+     1    14383 ulldddddd
+     2    13679 uldddddd
+     3    11557 ulldddddddd
+     4    11054 uldddddddd
+     5    11003 ulddddddddddd
+     6    10521 ullldddd
+     7    10099 ullddddddd
+     8    10060 ullddddddddddd
+     9     9967 ulddddddd
+    10     9264 ulllldddd
+
+//同时包含大小写的排序
+$ grep '[u]' 2014_1_last__hashcat_masks_sus | grep '[l]' | grep '[^d]' | grep '[^s]' | head -n 10 | nl
+     1    14383 ulldddddd
+     2    13679 uldddddd
+     3    11557 ulldddddddd
+     4    11054 uldddddddd
+     5    11003 ulddddddddddd
+     6    10521 ullldddd
+     7    10099 ullddddddd
+     8    10060 ullddddddddddd
+     9     9967 ulddddddd
+    10     9264 ulllldddd
+
+
+//连续的纯字符的排序
+$ sed -n '/\b\([luds]\)\1*$/p' 2014_1_last__hashcat_masks_sus
+16406454 ddddddddddd
+5475964 dddddddddd
+2129702 dddddddddddd
+1189570 dddddddddddddd
+ 822811 llllllllll
+ 734170 lllllllll
+ 658042 ddddddddddddd
+ 653511 llllllll
+ 643282 lllllllllll
+ 606358 dddddddddddddddd
+ 570914 llllllllllll
+
+//统计开头的第一个字母的数量排序
+$ awk '{a[substr($3,1,1)]+=$1;}END{for(i in a){{print i" "a[i];}}}' 2014_1_last__hashcat_masks_sus_length | sort -nr -k2
+
+//统计开头的第二个字母的数量排序
+$ awk '{a[substr($3,2,1)]+=$1;}END{for(i in a){{print i" "a[i];}}}' 2014_1_last__hashcat_masks_sus_length | sort -nr -k2
+
+//统计开头的第三个字母的数量排序
+$ awk '{a[substr($3,3,1)]+=$1;}END{for(i in a){{print i" "a[i];}}}' 2014_1_last__hashcat_masks_sus_length | sort -nr -k2
+
+//统计开头的前二个字母的数量排序
+$ awk '{a[substr($3,1,2)]+=$1;}END{for(i in a){{print i" "a[i];}}}' 2014_1_last__hashcat_masks_sus_length | sort -nr -k2
+
+//统计开头的前三个字母的数量排序
+$ awk '{a[substr($3,1,3)]+=$1;}END{for(i in a){{print i" "a[i];}}}' 2014_1_last_x_hashcat_masks_sus_length | sort -nr -k2
+
+//统计开头的前四个字母的数量排序
+$ awk '{a[substr($3,1,4)]+=$1;}END{for(i in a){{print i" "a[i];}}}' 2014_1_last__hashcat_masks_sus_length | sort -nr -k2
+
+//统计开头的最后一个字母的数量排序
+$ awk '{a[substr($3,length($3),1)]+=$1;}END{for(i in a){{print i" "a[i];}}}' 2014_1_last__hashcat_masks_sus_length | sort -nr -k2
+
+//提取特定字符集的字典
+
+grep -P "^[[:lower:]]+$" 2014_1_last__ >>2014_1_last__lower
+grep -P "^[[:upper:]]+$" 2014_1_last__ >>2014_1_last__upper
+grep -P "^[[:digit:]]+$" 2014_1_last__ >>2014_1_last__digit
+grep -P "^[[:punct:] ]+$" 2014_1_last__ >>2014_1_last__punct
+grep -P "^[[:lower:][:upper:]]+$" 2014_1_last__ | grep -P -v "^[[:lower:]]+$" | grep -P -v "^[[:upper:]]+$" >>2014_1_last__lowerupper
+grep -P "^[[:upper:][:punct:] ]+$" 2014_1_last__ | grep -P -v "^[[:upper:]]+$" | grep -P -v "^[[:punct:] ]+$" >>2014_1_last__upperpunct
+grep -P "^[[:lower:][:punct:] ]+$" 2014_1_last__ | grep -P -v "^[[:lower:]]+$" | grep -P -v "^[[:punct:] ]+$" >>2014_1_last__lowerpunct
+grep -P "^[[:lower:][:digit:]]+$" 2014_1_last__ | grep -P -v "^[[:lower:]]+$" | grep -P -v "^[[:digit:]]+$" >>2014_1_last__lowerdigit
+grep -P "^[[:upper:][:digit:]]+$" 2014_1_last__ | grep -P -v "^[[:upper:]]+$" | grep -P -v "^[[:digit:]]+$" >>2014_1_last__upperdigit
+grep -P "^[[:digit:][:punct:] ]+$" 2014_1_last__ | grep -P -v "^[[:digit:]]+$" | grep -P -v "^[[:punct:] ]+$" >>2014_1_last__digitpunct
+grep -P "^[[:lower:][:digit:][:punct:] ]+$" 2014_1_last__ | grep -P -v "^[[:lower:]]+$" | grep -P -v "^[[:digit:]]+$" | grep -P -v "^[[:punct:] ]+$" | grep -P -v "^[[:lower:][:digit:]]+$" | grep -P -v "^[[:lower:][:punct:] ]+$" | grep -P -v "^[[:digit:][:punct:] ]+$">>2014_1_last__lowerdigitpunct
+grep -P "^[[:upper:][:digit:][:punct:] ]+$" 2014_1_last__ | grep -P -v "^[[:upper:]]+$" | grep -P -v "^[[:digit:]]+$" | grep -P -v "^[[:punct:] ]+$" | grep -P -v "^[[:upper:][:digit:]]+$" | grep -P -v "^[[:upper:][:punct:] ]+$" | grep -P -v "^[[:digit:][:punct:] ]+$">>2014_1_last__upperdigitpunct
+grep -P "^[[:lower:][:upper:][:digit:]]+$" 2014_1_last__ | grep -P -v "^[[:lower:]]+$" | grep -P -v "^[[:upper:]]+$" | grep -P -v "^[[:digit:]]+$" | grep -P -v "^[[:lower:][:upper:]]+$" | grep -P -v "^[[:lower:][:digit:]]+$" | grep -P -v "^[[:upper:][:digit:]]+$" >>2014_1_last__lowerupperdigit
+grep -P "^[[:lower:][:upper:][:punct:] ]+$" 2014_1_last__ | grep -P -v "^[[:lower:][:upper:]]+$" | grep -P -v "^[[:lower:]]+$"  | grep -P -v "^[[:upper:]]+$" | grep -P -v "^[[:punct:] ]+$" | grep -P -v "^[[:lower:][:punct:] ]+$" | grep -P -v "^[[:upper:][:punct:] ]+$" | grep -P -v "^[[:lower:][:upper:]]+$" >>2014_1_last__lowerupperpunct
+grep -P "^[[:lower:][:upper:][:digit:][:punct:] ]+$" 2014_1_last__ | grep -P -v "^[[:alnum:]]+$" | grep -P -v "^[[:punct:] ]+$" | grep -P -v "^[[:lower:][:punct:] ]+$" | grep -P -v "^[[:upper:][:punct:] ]+$" | grep -P -v "^[[:digit:][:punct:] ]+$" | grep -P -v "^[[:upper:][:digit:][:punct:] ]+$" | grep -P -v "^[[:lower:][:digit:][:punct:] ]+$" | grep -P -v "^[[:lower:][:upper:][:punct:] ]+$" >>2014_1_last__lowerupperdigitpunct
+
+//用户名和密码组合
+$ cat user.txt
+root
+manager
+
+$ cat pass.txt
+123
+456
+asd
+password
+admin
+
+$ awk 'NR==FNR{a[FNR]=$1;num=FNR}NR>FNR{for(i=1;i<=num;i++){print a[i] ":" $1}}' user.txt pass.txt
+root:123
+manager:123
+root:456
+manager:456
+root:asd
+manager:asd
+root:password
+manager:password
+root:admin
+manager:admin

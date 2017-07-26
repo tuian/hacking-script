@@ -1,0 +1,577 @@
+关于google hack的几个基础过滤器使用[请务必谨记,过滤器虽然是死的,但人是活的,把自己的脑洞放到最大,才能拼装出高质量dorks]:
+intitle:  从网页标题中搜索指定的关键字,可专门用来搜索指定版本名称的各类web程序,也可用allintitle
+        inurl:                从url中搜索指定的关键字,可专门用来构造各种形式的漏洞url,也可用allinurl
+        intext:        从网页中搜索指定的关键字,可专门用它来穿透到漏洞页面等……也可用allintext
+        filetype: 搜索指定的文件后缀,例如:sql mdb txt bak backup ini zip rar doc xls……
+        site:      在某个特定的网站内中搜索指定的内容
+        link:      搜索和该链接有关联连接,比如:友情链接
+        index of: 找目录遍历会用到
+
+google所支持的一些通配符(建议选择性的用,越精确,就意味着结果越少,这样我们容易漏掉一些目标,毕竟不是正则,我们的最终目的是找到漏洞):
+        +   强制包含某个字符进行查询
+        -   查询的时候忽略某个字符
+        ""  查询的时候精确匹配双引号内的字符
+        .   匹配某单个字符进行查询
+        *   匹配任意字符进行查询
+        |   或者,多个选择,只要有一个关键字匹配上即可
+
+
+找各种web入口:
+        当然,这并非仅限于常规的网站后台,这里说到网站后台,一定要手工多尝试几个路径,例如:一些疑似目标内网web管理系统入口,web端的数据库管理入口,某些设备的web端配置入口,以及一些常见的java控制台等等……脑洞要大,东西在你手里随便尝试:
+
+
+搜集tomcat入口[默认8080端口]:
+                   直接这样搜无疑目标会非常多
+intext:$CATALINA_HOME/webapps/ROOT/ intitle:apache tomcat
+
+我们也可以带指定端口号去搜,因为有些web不在默认端口上,这样搜的话,可以更为精准
+intext:$CATALINA_HOME/webapps/ROOT/ inurl:8080/
+
+针对特定版本去搜
+                intext:$CATALINA_HOME/webapps/ROOT/ intitle:Apache Tomcat/5.5.27 site:*.hk
+                intext:$CATALINA_HOME/webapps/ROOT/ intitle:Apache Tomcat/7.0.32 site:*.gov.br
+                intext:$CATALINA_HOME/webapps/ROOT/ intitle:Apache Tomcat/5.0.12 site:*.cn
+                intext:$CATALINA_HOME/webapps/ROOT/ intitle:Apache Tomcat/6.0.24 site:*.com
+
+            搜特定类型的目标站点
+                intext:$CATALINA_HOME/webapps/ROOT/ intitle:apache tomcat site:*.edu.*
+                intext:$CATALINA_HOME/webapps/ROOT/ intitle:apache tomcat site:*.gov.*
+                intext:$CATALINA_HOME/webapps/ROOT/ intitle:apache tomcat site:*.org.*
+                intext:$CATALINA_HOME/webapps/ROOT/ intitle:Apache Tomcat/7.0 site:*.org.*
+                intext:$CATALINA_HOME/webapps/ROOT/ intitle:apache tomcat site:*.jp
+                intext:$CATALINA_HOME/webapps/ROOT/ intitle:apache tomcat site:*.vn
+                intext:$CATALINA_HOME/webapps/ROOT/ intitle:apache tomcat site:*.ph
+                intext:$CATALINA_HOME/webapps/ROOT/ intitle:Apache Tomcat site:*.uk
+
+无意中发现百度的某个子域,变成了博彩站
+intext:$CATALINA_HOME/webapps/ROOT/ intitle:apache tomcat site:baidu.com
+                intext:$CATALINA_HOME/webapps/ROOT/ intitle:apache tomcat site:org.tw
+        搜集weblogic入口:
+                inurl:/console/login/LoginForm.jsp  这样范围太大,可根据上面的事例进行随意变形
+                inurl:/console/login/LoginForm.jsp intitle:Oracle WebLogic Server
+                inurl:/console/login/ intitle:"Oracle WebLogic Server 管理控制台"
+               
+        搜集jboss入口:
+                inurl:/jmx-console/htmladaptor
+                inurl:/jmx-console/htmladaptor site:*.edu.*
+                inurl:/jmx-console/htmladaptor site:*.org.*
+                inurl:/jmx-console/htmladaptor site:*.tw
+        搜集websphere入口:
+                inurl:/ibm/console/logon.jsp
+
+        搜集phpmyadmin入口:
+                inurl:/phpMyAdmin/index.php
+                inurl:/phpMyAdmin/index.php db+information_schema   指定命中数据
+                inurl:/phpMyAdmin/index.php intext:phpMyAdmin 2.7.0 直接针对特定版本号去搜索,更加精准
+                inurl:/phpMyAdmin/index.php site:*.tw
+                inurl:/phpMyAdmin/index.php site:*.hk
+               
+        批量搜集webmin入口[默认10000端口]:
+                intitle:Login to Webmin intext:"login to the Webmin server on"
+               
+        批量搜wordpress程序[特征比较多,请大家自行随意构造]:
+                index of /wp-content/uploads inurl:/wp-login.php
+                inurl:/wp-content/themes/theagency    上传漏洞
+        批量搜joomla程序:
+                inurl:/administrator/index.php
+                inurl:index.php?option=com_advertisementboard  找注入
+                inurl:index.php?option=com_carocci
+                inurl:index.php?option=com_product
+               
+        批量搜drupal程序:
+                inurl:CHANGELOG.txt intext:drupal intext:"SA-CORE" -site:github.com -site:drupal.org
+
+        批量搜discuz程序:
+
+
+        批量搜集opencart程序:
+
+
+        批量搜集phpbb程序:
+
+
+        当然,你也可以根据下面的一些特征去找特定的开源程序[这种命中率显然没有直接用特征目录的命中率高]:
+                power by wordpress                 powered by discuz x3.2
+                powered by phpcms 2008            powered by drupal 7
+                powered by dedecmsv57_gbk         powered by CubeCart 3.0.6
+                Powered by phpBB 2.0.6            powered by paBugs 2.0 Beta 3
+                inurl:wp-login.php                 inurl:/administrator/index.php
+                inurl:/admina.php
+
+批量搜集目标的各类邮件系统web端入口[不一定有,多尝试,反正是信息搜集嘛,找到东西价值越高越好,webmail]:
+               
+owa:
+                        inurl:/owa/auth/logon.aspx
+                        inurl:/owa/auth/logon.aspx site:*.org.*
+               
+                mirapoint(ShellShock):
+                        inurl:/cgi-bin/search.cgi site:*.org.*
+                        inurl:/cgi-bin/madmin.cgi
+               
+                Zimbra(本地包含):
+                        inurl:7071/zimbraAdmin/
+                        inurl:/help/en_US/standard/version.htm
+               
+                Atmail(用于连接数据库的配置文件泄露):
+               
+               
+TurboMail(配置错误,进入任意邮箱):
+               
+                U-mail(注入&getshell):
+               
+               
+Lotus Domino Webmail(越权访问):
+
+
+
+        批量找常规网站后台,下面的php也可以换成asp,aspx,jsp 进行多次尝试,因为每个国家对后台的命名习惯都各有特色,所以,这里只列举了一些相对命中率比较高的,找到后台以后,记得习惯性多尝试几个弱口令和万能密码之类的东西:
+                inurl:/manager/login.php site:*.jp
+                inurl:/cms/login.php site:*.jp
+                inurl:/manage/index.php site:*.jp
+                inurl:/system/login.php site:*.jp
+                inurl:/webadmin/login.php site:*.tw
+                inurl:admin_login.php intitle:admin login
+                inurl:admin_login.php intitle:admin page
+                inurl:/admin/login.php site:*.tw
+                inurl:/admin/index.php site:*.tw
+                inurl:/system/adminlogin.asp  site:*.tw
+                inurl:/manage/login.aspx  site:*.tw
+                inurl:/sysadm/index.php  site:*.com
+                ……
+
+别忽视了svn泄露问题:
+                inurl:/.svn/entries
+                inurl:/.svn/entries site:*.org.*
+                inurl:/.svn/entries site:*.gov.br
+                inurl:/.svn/entries site:*.hk
+
+
+
+
+
+批量找目标的后台未授权访问:
+        intext:"Website Design & Developed By : WebSay"  默认后台/admin
+        intext:"Powered by ENS Consultants"  默认后台/admin/login.php
+        intext:"Desenvolvimento - MW Way"    默认后台/admin/index.php
+        inurl:.php?id= intext:"Web realizada por Soma Estudio"
+        inurl:/_mycps/login.php
+       
+批量找弱口令:
+        intext:"design by weli"   默认后台: /adm/login.php 除了弱口令还有注入
+        username : linjizen@gmail.com
+        password : lin719192
+
+尽可能多的找到能够利用的各种上传点[比如:各种典型的漏洞编辑器地址,ck,kindeditor,fck,ewebeditor……]:
+        intext:" Powered by JADBM "   JADBM Cms upload shell 注册后登陆上传即可
+        inurl:"/index.php/frontend/login/en"  Estate cms upload shell 注册后登陆上传即可
+        inurl:/Content/Roxy_Fileman/   该路径下直接就是上传点
+        index of:"filemanager/dialog.php"  该脚本就是上传脚本直接上传即可
+        intext:"Desenvolvido por Webnet Soluções Tecnológicas." fck上传
+        inurl:"subir_foto.php" 上传点
+        inrul:"/imce?dir=" intitle:"File Browser"
+        inurl:"Powered by Vision Helpdesk 3.9.10 Stable" 注册后登陆进去编辑个人配置上传
+        index of /admin/fckeditor site:*.tw
+        inurl:/ewebeditor/  site:*.tw
+        inurl:/admin/upload_file.php
+        inurl:/admin/upfile.php
+        inurl:/admin/upload.asp
+找到可能存在的包含和命令执行类漏洞:
+        inurl:footer.inc.php?settings=
+        inurl:/pb_inc/admincenter/index.php?page=
+        inurl:/pnadmin/categories.inc.php?subpage=
+        inurl:/index.php??view=src/sistema/vistas/
+        inurl:/edit.php?em=file&filename=
+        inurl:/path_to_athena/athena.php?athena_dir= 远程包含
+        inurl:/path_to_qnews/q-news.php?id=  远程包含
+        inurl:/inc/backend_settings.php?cmd=
+        inurl:login.action strus2系列执行漏洞利用
+        inurl:php?x=                    inurl:php?open=
+    inurl:php?visualizar=         inurl:php?pagina=
+    inurl:php?inc=                 inurl:php?include_file=
+    inurl:php?page=                inurl:php?pg=
+    inurl:php?show=                inurl:php?cat=
+    inurl:php?file=                inurl:php?path_local=
+    inurl:php?filnavn=            inurl:php?HCL_path=
+    inurl:php?doc=                 inurl:php?appdir=
+    inurl:php?phpbb_root_dir=    inurl:php?phpc_root_path=
+    inurl:php?path_pre=           inurl:php?nic=
+    inurl:php?sec=                 inurl:php?content=
+    inurl:php?link=                inurl:php?filename=
+    inurl:php?dir=                 inurl:php?document=
+    inurl:index.php?view=         inurl:*.php?locate=
+    inurl:*.php?place=             inurl:*.php?layout=
+    inurl:*.php?go=                inurl:*.php?catch=
+    inurl:*.php?mode=            inurl:*.php?name=
+    inurl:*.php?loc=             inurl:*.php?f=
+    inurl:*.php?inf=             inurl:*.php?pg=
+    inurl:*.php?load=            inurl:*.php?naam=
+    allinurl:php?page=           allinurl:php?file=
+    inurl:php?x=                  inurl:admin.php?cal_dir=
+    inurl:php?include=           inurl:php?nav=
+    inurl:*.php?sel=             inurl:php?p=
+    inurl:php?conf=              inurl:php?prefix=
+    inurl:theme.php?THEME_DIR=
+    inurl:php?lvc_include_dir=  
+    inurl:php?basepath=          inurl:php?pm_path=
+    inurl:php?user_inc=          inurl:php?cutepath=
+    inurl:php?fil_config=        inurl:php?libpach=
+    inurl:php?pivot_path=        inurl:php?rep=
+    inurl:php?conteudo=          inurl:php?root=
+    inurl:php?configFile         inurl:php?pageurl
+    inurl:php?inter_url          inurl:php?url=
+    inurl:php?cmd=                inurl:path.php?my=
+    inurl:php?xlink=              inurl:php?to=
+    inurl:file.php?disp=
+       
+       
+找各类数据库注入:
+        inurl:categorysearch.php?indus=
+        intext:"樂天台東民宿網" inurl:news_board.php
+        小商城类注入:
+                inurl:".php?catid=" intext:"View cart"
+                inurl:".php?catid=" intext:"Buy Now"
+                inurl:".php?catid=" intext:"add to cart"
+                inurl:".php?catid=" intext:"shopping"
+                inurl:".php?catid=" intext:"boutique"
+                inurl:".php?catid=" intext:"/store/"
+                inurl:".php?catid=" intext:"/shop/"
+                inurl:".php?catid=" intext:"Toys"
+                inurl:details.php?BookID=
+                inurl:shop.php?do=part&id=
+   
+   普通cms类注入:
+     inurl:article.php?ID=        inurl:newsDetail.php?id=
+     inurl:show.php?id=            inurl:newsone.php?id=
+     inurl:news.php?id=            inurl:event.php?id=
+     inurl:preview.php?id=        inurl:pages.php?id=
+     inurl:main.php?id=            inurl:prod_detail.php?id=
+     inurl:view.php?id=            inurl:product.php?id=
+     inurl:contact.php?Id=        inurl:display_item.php?id=
+     inurl:item.php?id=            inurl:view_items.php?id=
+     inurl:details.asp?id=        inurl:profile.asp?id=
+     inurl:content.asp?id=        inurl:display_item.asp?id=
+     inurl:view_detail.asp?ID=    inurl:section.php?id=
+     inurl:theme.php?id=          inurl:produit.php?id=
+     inurl:chappies.php?id=       inurl:readnews.php?id=
+     inurl:rub.php?idr=           inurl:pop.php?id=
+     inurl:person.php?id=         inurl:read.php?id=
+     inurl:reagir.php?num=        inurl:staff_id=
+     inurl:gallery.php?id=        inurl:humor.php?id=
+     inurl:spr.php?id=            inurl:gery.php?id=
+     inurl:profile_view.php?id=
+     inurl:fellows.php?id=        inurl:ray.php?id=
+     inurl:productinfo.php?id=
+     inurl:file.php?cont=         inurl:include.php?chapter=
+     inurl:principal.php?param=
+     inurl:general.php?menue=     inurl:php?pref=
+     inurl:nota.php?chapter=      inurl:php?str=
+     inurl:php?corpo=               inurl:press.php?*
+*=
+
+除了上面这些常规找注入的方式,你不妨还可以想下面这样,直接在网页标题或者url中搜sql语句,说不定也会有收获:
+        intitle:注入常用的一些sql语句,比如:常用的union,substr(),select等等……
+       
+批量搜集万能密码(属于注入的一种):
+        inurl:"wladmin/login.asp"  
+        Username : '=' 'or'
+        Password : '=' 'or'
+       
+        intext:POWERED BY Versatile Software Services       默认后台/alogin.aspx
+        User ==> 'or''='
+        Pass ==> 'or''='
+
+        inurl:/media.php?hal=login
+        Email: '=''or'@gmail.com
+        Pass: '=''or'
+       
+        intext:"Powered by : Best Webmasterz." 默认后台/admin
+        User : '=' 'OR'
+        Pass : '=' 'OR'
+       
+        intext:"Web Design and Maintenance by Cloud 5 Solutions" 默认后台/admin/login.php
+        User : '=' 'OR'
+        Pass : '=' 'OR'
+       
+        intext:"网站设计：火龙科技" 默认后台/maintain/login.php
+        Username : '=' 'or'
+        Password : '=' 'or'
+       
+        intext:"Powered by Moodyworld" 默认后台/admin/
+        Username : '=' 'or'
+        Password : '=' 'or'
+
+找遗留的各种数据库报错,物理路径,数据库版本,服务器探针类文件等等……:
+        site:*.tw  inurl:/phpinfo.php
+        filetype:log "PHP Parse error"| "PHP Warning"
+        site:*.tw  "id=" & intext:"Warning: mysql_fetch_array()
+        site:*.jp  "id=" & intext:"Warning: getimagesize()
+        site:*.br  "id=" & intext:"Warning: array_merge()
+        site:*.tw  "id=" & intext:"Warning: mysql_fetch_assoc()
+        site:*.tw  "id=" & intext:"Warning: mysql_result()
+        site:*.jp  "id=" & intext:"Warning: pg_exec()
+        site:*.tw  "id=" & intext:"Warning: require()
+        inurl:/robots.txt site:*.*
+       
+搜集各种账号密码,比如,数据库密码,ftp,vpn,htpasswd,telnet等等……:
+
+        可能会遗留的密码文件:
+                inurl:passlist.txt
+                inurl:password.txt
+
+        重要配置文件泄露:
+                inurl:/application/configs/  配置文件名为/application/configs/application.ini
+
+        htpasswd:
+                htpasswd.bak filetype:htpasswd
+
+        vpn(cisco)[为捅内网,做准备]:
+                filetype:pcf  "GroupPwd"
+
+        cisco在线密码解密网站:
+                https://www.unix-ag.uni-kl.de/~massar/bin/cisco-decode
+
+
+
+        ftp:
+                "index of/" "ws_ftp.ini" "parent directory"
+                "your password is" filetype:log
+                filetype:ini inurl:"serv-u.ini"
+                filetype:ini inurl:flashFXP.ini
+                filetype:ini ServUDaemon
+                filetype:ini wcx_ftp
+                filetype:ini ws_ftp pwd
+                ext:inc "pwd=" "UID="
+                auth_user_file.txt
+                例如:
+                        http://www.cryptoman.com/ftp/
+                        http://www.cryptoman.com/ftp/WS_FTP.ini
+        其他密码:
+                admin account info" filetype:log
+
+批量找目录遍历[上传点,数据库文件下载,phpmyadmin,网站后台及网站各种备份,源代码泄露等同样也可以用这种方式慢慢找]:
+        site:*.hk index of /admin
+        site:*.hk index of /upfiles
+        site:*.hk index of /fckeditor/editor/
+        site:*.tw index of /admin/uploadfile
+        site:*.tw index of /admin/file
+        site:*.tw index of /system/file
+        site:*.tw index of /phpmyadmin
+        site:*.tw index of /web/backup/
+        inurl:/phpmyadmin/index.php site:*.tw
+搜同行们的各种工具脚本:
+
+绝大部分人在用别人东西的时候,基本是很少看里面代码的[即使开源],更不要说去除特征及后门,
+        没办法现状如此,大家都很懒,既是如此,就不免要把自己的成果也被迫的共享给别人一份,所以养成良好的读代码习惯,是有必要的:
+       
+        搜同行的脱裤脚本:
+        intitle:登录 - Adminer  这里只是随便举个例子,你可以自己平时多搜集一些境内外常用的脱裤脚本的标题,文件名什么的,慢慢尝试
+
+        同样,你也可以用上面这种方式来找下别人的aspx嗅探脚本,例如:
+        websniff
+
+        找别人遗留的各种webshell,平时注意多搜集一些镜内外常用的大马特征,这里只是随便举几个例子,你可以随意组装自己的:
+        inurl:b374k.php filetype:php
+    inurl:c99.php
+    inurl:c100.php Generation time:
+    inurl:itsecteam_shell.php
+    intext:x2300 Locus7Shell v. 1.0a beta Modded by
+    intext:c99shell inurl:c99.php
+    powered by Captain Crunch Security Team
+    "inurl:c99.php" + "intext:safe"
+    intitle:r57shell
+    intitle:c99shell +uname
+    inurl:c99.php uid=0(root)
+    intitle:c99shell+filetype:php
+    intitle:ly0kha shell
+    inurl:.php "cURL: ON MySQL: ON MSSQL: OFF"
+    "Shell" filetypehp intext:"uname -a:" "EDT 2010"
+    intitle:"intitle:r57shell"
+    inurl:"c99.php" & intext:Encoder Tools Proc.
+    inurl:"c100.php" & intext:Encoder Tools Proc.
+    intitle:"Shell" inurl:".php" & intext:Encoder Tools Proc.
+
+        还有其他的更多工具特征,忘大家自己去整理了
+
+
+找到目标的owa和vpn入口[内网入口]:
+
+        owa入口:
+     inurl:/owa/auth/logon intitle:outlook
+     inurl:/owa/auth/logon intext:outlook
+
+    vpn入口:
+     inurl:/sslvpn site:hk
+
+找些好下手的目标子域:
+        site:polyu.edu.hk inurl:asp?pid=
+    site:polyu.edu.hk inurl:aspx?id=
+    site:polyu.edu.hk inurl:php?id=
+    site:polyu.edu.hk inurl:jsp?id=
+    site:polyu.edu.hk inurl:do?id=
+site:polyu.edu.hk inurl:cgi?id=
+
+找目标的数据库备份及其他敏感文件目录[一般后缀都是sql,mdb,txt……],像数据库和网站吧备份这种东西,还是建议直接用工具跑比较好,前提字典要自己精心制作:
+        filetype:sql inurl:backup inurl:wp-content
+        inurl:/eWebEditor/db/ site:*.com       
+
+从目标网站上搜集目标邮箱:
+        site:*.gov.tw *@gov.tw
+
+关于google hacking的东西基本就到此为止了,最后推荐一个不错的google hacking站点,方便大家练习:
+        https://cxsecurity.com/exploit/  极力推荐此站点,里面已经为我们准备好各种各样的高质量google dorks
+        https://www.exploit-db.com/google-hacking-database/ 并不推荐,exp不错,但这方面比较废
+
+
+
+
+谷歌一些好玩的小玩具,无聊的时候可以自己玩玩,玩的方法很简单,直接在谷歌里面搜下面的关键字就行了(说实话,比百度人性多了):
+        do a barrel roll
+        Askew
+        zerg rush
+        google sphere
+        atari breakout 图片碰碰球
+        google gravity 碎片
+        google sky
+        blink html 抖动
+
+
+想必说大这里,你已经可以发现google到底是有多么的强大了:
+        错误配置,敏感文件目录,各种信息泄露(源码泄露,重要配置文件泄露,密码泄露等),批量漏洞利用,最强大的社工库资源等等……你在web上所能利用到的一切,无死角尝试就可以了
+
+
+其他的一些小恶作剧,也不小了,不要瞎弄,做错了事始终要承担责任的:
+        搜集个人身份证信息
+                filetype:xls 身份证 site:cn
+        搜集被盗QQ号什么的
+        搜集别人还在有效期的信用卡,千万不要干坏事儿,不然会被请去喝茶的……
+        还有图片识别,位置识别,谷歌为我提供了很多很强大的功能,有必要的话可以去学习如何使用谷歌的这些api
+
+
+
+关于robots.txt文件的作用:
+        此文件一般位于网站根目录下,规定了搜索引擎不能爬行的一些目录,一般都是一些敏感目录,比如:后台,数据库连接配置文件,安装目录等等……
+        一般我们在试了几个常用的后台目录都不行的情况,习惯性的就会直接去访问下目标的robots.txt文件,很可能这文件里面就存的有后台路径
+        但,那只是有可能,不尝试,连可能都没有
+
+
+
+
+
+
+
+
+shodan 入门[在入侵一些网络设备的时候还是非常好用的,俗称"工控设备渗透"]:
+[不像谷歌,bing那样只是单单是基于web爬行,shodan则是基于网络旗标搜索的,我们主要可以用它来碰各种网络设备的默认密码默认只能看到50个结果,可能需要付点费才能看到更多的搜索结果]
+
+官方站点[去注册个账号,必须的]:
+                https://www.shodan.io/  
+
+shodan 内置的几个简单过滤器:
+        city:             城市,貌似只支持英文
+        country:   国别,比如:cn,us,jp,tw,br,ph,vn,hk
+        hostname: 主机名[域名如果是子域还需要在前面加个.]
+        net:       网络地址范围,可以是单个ip或者cidr格式
+        os :             操作系统 centOS,win32,red hat,suse 等等
+        port:            根据端口,HTTP (80),FTP (21),SSH (22),SNMP (161),SIP (5060)等等
+        product:  具体的产品名称
+               
+下面是一些简单的搜索实例:
+        搜集某个城市的特定设备标识[自己多收集一些常见的软件和设备标识]:
+                Microsoft-IIS/5.0 city:"TOKYO"   可以逐个尝试写权限
+                Microsoft-IIS/6.0 city:"Seoul"       
+                Microsoft-IIS/7.5 city:"Hong Kong"
+                apache city:"Nagoya"
+                Apache/2.2.27 city:"Nagoya"
+                Tomcat city:"Seoul"
+                cisco city:"Osaka"
+                tplink city:"nanjing"
+        搜索特定版本操作系统及特定端口:
+                os:"linux" net:"72.34.62.0/24"
+                os:"windows" net:"195.40.91.0/24"
+                Apache city:"Hong Kong" port:"8080"  product:"Apache Tomcat/Coyote JSP engine"
+                Apache city:"Seoul" port:"8080"
+                hostname:".polyu.edu.hk" os:"windows"
+                       
+        搜索指定国家地域的特定类型软件(还是那句话,多搜集一些软件标识):
+                product:"tomcat"  net:"158.132.18.0/24"
+                product:"apache"  net:"158.132.18.0/24"
+                product:"iis"     net:"158.132.18.0/24"
+                port:"8080" jboss country:CN
+                       
+        扫描指定网段的所有数据库服务器:
+                product:"Mysql"  net:"140.117.13.0/24" port:"3306"
+                port:"1433" net:"78.131.197.0/24"
+                port:"5432" net:"77.55.149.0/24"
+                port:"1521" net:"78.143.192.0/12"
+                port:"1521" city:"Osaka"
+                       
+        搜索远程管理终端:
+                os:"windows" port:"3389" net:"107.160.1.0/24"
+                os:"linux" port:"22" net:"107.160.1.0/24"
+                os:"linux" port:"23" net:"107.160.1.0/24"
+                os:"linux" port:"23" net:"87.124.0.0/15"
+               
+        搜路由:
+
+搜索ftp:
+                port:"21" net:"107.160.1.0/24"
+                port:"69" net:"218.242.16.0/24"
+                       
+        在某个城市中搜索指定的端口,操作系统及设备:
+                city:"Hong Kong" port:"69"
+                city:"Hong Kong" port:"3389"
+                city:"Hong Kong" port:"22"
+                city:"Hong Kong" port:"23"
+                city:"Hong Kong" port:"3306"
+                city:"Hong Kong" port:"110"
+                city:"Hong Kong" os:"windows"
+                city:"Hong Kong" product:"cisco"
+                city:"Hong Kong" port:"8080"
+               
+        按照国家进行搜索指定的设备,端口,服务器:
+                port:"23" country:CN
+                port:"1433" country:CN
+                port:"3389" country:CN
+                tplink country:CN
+                huawei country:CN
+                netcam  country:CN
+                country:CN net:"115.225.113.0/24" port:"22"
+                country:CN router
+                admin login  country:HK
+                hacked by country:HK
+
+        搜集缺省密码:
+                "default password" city:"Hong Kong"
+                country:CN "default password"
+
+        搜exp[其实,就是把exploit上的东西扒下来]:
+                https://exploits.shodan.io/welcome
+
+        搜索各类漏洞摄像头:
+                netcam net:"187.189.82.0/24"
+
+        批量搜集一些开源程序,尝试0day批量利用:
+
+        下面是一些常见的默认用户名密码,可以撞撞运气:
+                ACTi: admin/123456 or Admin/123456
+                Axis (traditional): root/pass,
+                Axis (new): requires password creation during first login
+                Cisco: No default password, requires creation during first login
+                Grandstream: admin/admin
+                IQinVision: root/system
+                Mobotix: admin/meinsm
+                Panasonic: admin/12345
+                Samsung Electronics: root/root or admin/4321
+                Samsung Techwin (old): admin/1111111
+                Samsung Techwin (new): admin/4321
+                Sony: admin/admin
+                TRENDnet: admin/admin
+                Toshiba: root/ikwd
+                Vivotek: root/<blank>
+                WebcamXP: admin/ <blank>
+
+        针对某个端口,批量搜集感染了某种数据标志的木马:
+
+        批量搜集一些经典漏洞,比如:心脏滴血,bash远程执行,等等……:
+
+        shodan 到此为止,就这些了,大家如果真的想用它的api,可以付点费,批量抓鸡效果还是非常不错的,目前公开的也已经有很多基于此api写出来的一些批量漏洞扫描程序,也不用太过羡慕,只是用别人的api而已,你也可以写出来,最多只是不好看而已,透过现象看本质嘛,就其本身使用来说,基本是没任何技术含量,关键在于对各种设备标识的熟知程度和积累,这里纯粹是为了抛砖引玉,还是那句话,对于这类的东西,脑洞要大

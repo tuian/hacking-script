@@ -1,0 +1,51 @@
+为什么不花些时间都放在同一张表里，这样更方便啊
+
+INSERT INTO NewDB.dbo.Newtable(.......) SELECT (......) FROM GroupData1.dbo.Group1
+INSERT INTO NewDB.dbo.Newtable(.......) SELECT (......) FROM GroupData1.dbo.Group2
+.....
+INSERT INTO NewDB.dbo.Newtable(.......) SELECT (......) FROM GroupData2.dbo.Group101
+INSERT INTO NewDB.dbo.Newtable(.......) SELECT (......) FROM GroupData2.dbo.Group102
+.....
+
+以此类推，一共1100条，编辑好后放到查询分析器执行，我电脑耗时3个小时
+
+之后针对QQ号和群号分别建立索引
+
+USE [NewDB]
+GO
+CREATE NONCLUSTERED INDEX [IDX_QQ_NUM] ON [dbo].[Newtable] 
+(
+        [QQNum] ASC
+)WITH (STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+GO
+
+
+
+USE [NewDB]
+GO
+CREATE NONCLUSTERED INDEX [IDX_QUN_NUM] ON [dbo].[Newtable] 
+(
+        [QunNum] ASC
+)WITH (STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+GO
+
+每个索引建立时间大约3个小时。(索引建立要放在查询分析器用命令执行，不要使用GUI，数据量太大，会提示超时)
+
+这样弄好后就是一个库一个表，可以实现瞬间反馈查询结果了
+
+批处理合并
+::合并所有表
+@echo off
+del /f /q 1.sql
+setlocal Enabledelayedexpansion
+set  p=0
+for /l %%i in (1,1,11) do (
+        for /l %%j in (1,1,100) do (
+                set /a p=!p!+1
+                echo INSERT INTO qqinfo.dbo.qqinfo^([QQNum],[Nick],[Age],[Gender],[QunNum]^) SELECT [QQNum],[Nick] ,[Age] ,[Gender] ,[QunNum] FROM GroupData%%i.dbo.Group!p!>>1.sql
+                echo go>>1.sql
+                )
+        
+        ) 
+        
+osql -E -i 1.sql

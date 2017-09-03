@@ -1,4 +1,4 @@
-为什么不花些时间都放在同一张表里，这样更方便啊
+﻿为什么不花些时间都放在同一张表里，这样更方便啊
 
 INSERT INTO NewDB.dbo.Newtable(.......) SELECT (......) FROM GroupData1.dbo.Group1
 INSERT INTO NewDB.dbo.Newtable(.......) SELECT (......) FROM GroupData1.dbo.Group2
@@ -34,6 +34,7 @@ GO
 这样弄好后就是一个库一个表，可以实现瞬间反馈查询结果了
 
 批处理合并
+group合并
 ::合并所有表
 @echo off
 del /f /q 1.sql
@@ -42,7 +43,26 @@ set  p=0
 for /l %%i in (1,1,11) do (
         for /l %%j in (1,1,100) do (
                 set /a p=!p!+1
-                echo INSERT INTO qqinfo.dbo.qqinfo^([QQNum],[Nick],[Age],[Gender],[QunNum]^) SELECT [QQNum],[Nick] ,[Age] ,[Gender] ,[QunNum] FROM GroupData%%i.dbo.Group!p!>>1.sql
+                echo INSERT INTO qqinfo.dbo.qqinfo^([QQNum],[Nick],[Age],[Gender],[Auth],[QunNum]^) SELECT [QQNum],[Nick] ,[Age] ,[Gender] ,[Auth],[QunNum] FROM GroupData%%i.dbo.Group!p!>>1.sql
+                echo go>>1.sql
+                )
+        
+        ) 
+        
+osql -E -i 1.sql
+
+
+qunlist合并
+
+::合并所有表
+@echo off
+del /f /q 1.sql
+setlocal Enabledelayedexpansion
+set  p=0
+for /l %%i in (1,1,11) do (
+        for /l %%j in (1,1,10) do (
+                set /a p=!p!+1
+                echo INSERT INTO qqinfo.dbo.quninfo^([QunNum],[MastQQ],[CreateDate],[Title],[Class],[QunText]^) SELECT [QunNum],[MastQQ],[CreateDate],[Title],[Class],[QunText] FROM QunInfo%%i.dbo.QunList!p!>>1.sql
                 echo go>>1.sql
                 )
         
